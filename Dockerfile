@@ -1,14 +1,15 @@
-# Usamos CentOS 7 que sigue funcionando
 FROM centos:7
 
-# Instalamos el servidor web Apache (httpd)
+# --- PARCHE PARA ARREGLAR CENTOS 7 (EOL) ---
+RUN cd /etc/yum.repos.d/ && \
+    sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+# -------------------------------------------
+
 RUN yum -y install httpd
 
-# Copiamos el archivo index.html a la carpeta del servidor
 COPY index.html /var/www/html/
 
-# Le decimos a Docker que arranque el servidor
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 
-# Abrimos el puerto 80
 EXPOSE 80
